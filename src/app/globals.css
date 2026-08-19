@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --surface: #fcfcfb;
+  --page: #f5f6f5;
+  --ink: #0b0b0b;
+  --ink-secondary: #52514e;
+  --ink-muted: #898781;
+  --hairline: #e1e0d9;
+  --border: rgba(11, 11, 11, 0.1);
+
+  --brand: #2a78d6;
+  --brand-dark: #184f95;
+  --brand-tint: #eaf2fc;
+
+  --good: #0ca30c;
+  --good-tint: #e9f7e9;
+  --warning: #fab219;
+  --warning-tint: #fef4e0;
+  --serious: #ec835a;
+  --serious-tint: #fdeee7;
+  --critical: #d03b3b;
+  --critical-tint: #fbe9e9;
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-page: var(--page);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-hairline: var(--hairline);
+
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-tint: var(--brand-tint);
+
+  --color-good: var(--good);
+  --color-good-tint: var(--good-tint);
+  --color-warning: var(--warning);
+  --color-warning-tint: var(--warning-tint);
+  --color-serious: var(--serious);
+  --color-serious-tint: var(--serious-tint);
+  --color-critical: var(--critical);
+  --color-critical-tint: var(--critical-tint);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  border-color: var(--hairline);
+}
+
+/* Larger, easier tap targets everywhere -- this app lives on tablets, run by
+   people who don't want to hunt for a tiny button. */
+button, a, input, select, textarea {
+  font-size: 16px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hairline);
+  border-radius: 8px;
+}
