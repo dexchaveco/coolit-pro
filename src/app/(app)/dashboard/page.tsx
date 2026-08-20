@@ -1,12 +1,14 @@
-import { getDashboardStats, listActivity, listJobsForSchedule, listLeads } from "@/lib/data";
+import Link from "next/link";
+import { getDashboardStats, listActivity, listJobsForSchedule, listLeads, listFailedQboSyncs } from "@/lib/data";
 import { PageHeader, StatTile, Card, StatusBadge, EmptyState, LinkButton } from "@/components/ui";
 import { formatCents, formatDateTime, timeAgo } from "@/lib/utils";
-import { PhoneIncoming } from "lucide-react";
+import { PhoneIncoming, AlertTriangle } from "lucide-react";
 
 export default async function DashboardPage() {
   const stats = getDashboardStats();
   const activity = listActivity(12);
   const openLeads = listLeads().filter((l) => l.status === "NEW" || l.status === "CONTACTED").slice(0, 5);
+  const failedSyncs = listFailedQboSyncs();
 
   const now = new Date();
   const start = now.toISOString().slice(0, 10);
@@ -20,6 +22,21 @@ export default async function DashboardPage() {
         subtitle="Everything coming in and going out, in one place — not just in Rick's head."
         actions={<LinkButton href="/intake">View intake board</LinkButton>}
       />
+
+      {failedSyncs.length > 0 && (
+        <Link
+          href="/invoices"
+          className="flex items-center gap-3 rounded-2xl border border-critical/30 bg-critical-tint px-4 py-3 mb-6 hover:border-critical/50"
+        >
+          <AlertTriangle className="h-4.5 w-4.5 text-critical shrink-0" />
+          <p className="text-sm text-critical">
+            <span className="font-medium">
+              {failedSyncs.length} invoice{failedSyncs.length === 1 ? "" : "s"} didn&apos;t reach QuickBooks
+            </span>{" "}
+            — tap to review and retry.
+          </p>
+        </Link>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <StatTile label="Open leads" value={stats.newLeads} href="/intake" tone={stats.newLeads > 3 ? "warning" : "default"} />

@@ -14,8 +14,8 @@ export function CustomerEditForm({ customer }: { customer: CustomerRow }) {
       <Field label="Email">
         <Input name="email" type="email" defaultValue={customer.email ?? ""} />
       </Field>
-      <Field label="Address">
-        <Input name="address" defaultValue={customer.address ?? ""} />
+      <Field label="Address (optional)">
+        <Input name="address" defaultValue={customer.address ?? ""} placeholder="Not required to bill" />
       </Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="City">

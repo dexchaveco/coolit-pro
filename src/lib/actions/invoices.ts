@@ -16,23 +16,33 @@ export async function createInvoiceAction(formData: FormData) {
   const notes = String(formData.get("notes") || "").trim();
   const taxRate = parseFloat(String(formData.get("tax_rate") || "0")) / 100;
 
-  const descriptions = formData.getAll("item_description") as string[];
+  const services = formData.getAll("item_service") as string[];
+  const scopes = formData.getAll("item_scope") as string[];
   const quantities = formData.getAll("item_quantity") as string[];
   const prices = formData.getAll("item_price") as string[];
 
   if (!customer_id) return { error: "Customer is required." };
 
   let subtotalCents = 0;
-  const lineItems: { description: string; quantity: number; unit_price_cents: number; amount_cents: number }[] = [];
+  const lineItems: { service: string; description: string; quantity: number; unit_price_cents: number; amount_cents: number }[] = [];
 
-  for (let i = 0; i < descriptions.length; i++) {
-    const description = (descriptions[i] || "").trim();
-    if (!description) continue;
-    const quantity = parseFloat(quantities[i] || "1") || 1;
+  for (let i = 0; i < services.length; i++) {
+    const service = (services[i] || "").trim();
+    const scope = (scopes[i] || "").trim();
     const unit_price_cents = dollarsToCents(prices[i] || "0");
+    if (!service || !unit_price_cents) continue;
+    // Short scopes read fine inline ("Service — scope"); longer/multi-paragraph
+    // scopes (full Scope of Work / Warranty / Exclusions text) get their own lines.
+    const description =
+      scope && (scope.includes("\n") || scope.length > 60)
+        ? `${service}\n\n${scope}`
+        : scope
+          ? `${service} — ${scope}`
+          : service;
+    const quantity = parseFloat(quantities[i] || "1") || 1;
     const amount_cents = Math.round(quantity * unit_price_cents);
     subtotalCents += amount_cents;
-    lineItems.push({ description, quantity, unit_price_cents, amount_cents });
+    lineItems.push({ service, description, quantity, unit_price_cents, amount_cents });
   }
 
   const taxCents = Math.round(subtotalCents * taxRate);
@@ -48,9 +58,9 @@ export async function createInvoiceAction(formData: FormData) {
 
   lineItems.forEach((item, idx) => {
     run(
-      `INSERT INTO invoice_line_items (invoice_id, description, quantity, unit_price_cents, amount_cents, sort_order)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [invoiceId, item.description, item.quantity, item.unit_price_cents, item.amount_cents, idx]
+      `INSERT INTO invoice_line_items (invoice_id, service, description, quantity, unit_price_cents, amount_cents, sort_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [invoiceId, item.service, item.description, item.quantity, item.unit_price_cents, item.amount_cents, idx]
     );
   });
 

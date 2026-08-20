@@ -8,7 +8,7 @@ function getSecret() {
   return new TextEncoder().encode(secret);
 }
 
-const PUBLIC_PATHS = ["/login", "/api/webhooks"];
+const PUBLIC_PATHS = ["/login", "/setup", "/api/webhooks"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS customers (
   zip TEXT,
   notes TEXT,
   on_maintenance_plan INTEGER NOT NULL DEFAULT 0,
+  qbo_customer_id TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -124,17 +125,47 @@ CREATE TABLE IF NOT EXISTS invoices (
   due_date TEXT,
   paid_at TEXT,
   notes TEXT,
+  -- QuickBooks sync tracking: always visible proof of what happened, never a silent guess.
+  qbo_invoice_id TEXT,
+  qbo_sync_status TEXT NOT NULL DEFAULT 'NOT_SYNCED' CHECK (qbo_sync_status IN ('NOT_SYNCED', 'SYNCING', 'SYNCED', 'FAILED')),
+  qbo_sync_error TEXT,
+  qbo_synced_at TEXT,
+  qbo_sync_attempts INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS invoice_line_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+  service TEXT,
   description TEXT NOT NULL,
   quantity REAL NOT NULL DEFAULT 1,
   unit_price_cents INTEGER NOT NULL DEFAULT 0,
   amount_cents INTEGER NOT NULL DEFAULT 0,
   sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+-- Single-row table: this company's QuickBooks OAuth connection, if connected.
+CREATE TABLE IF NOT EXISTS qbo_connection (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  realm_id TEXT NOT NULL,
+  environment TEXT NOT NULL DEFAULT 'sandbox' CHECK (environment IN ('sandbox', 'production')),
+  access_token TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
+  access_token_expires_at TEXT NOT NULL,
+  refresh_token_expires_at TEXT NOT NULL,
+  company_name TEXT,
+  connected_by INTEGER REFERENCES users(id),
+  connected_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Cache of Coolit Pro service names -> the QuickBooks Item they map to, so we
+-- reuse the same ~20 items instead of creating a new one per sync.
+CREATE TABLE IF NOT EXISTS qbo_service_items (
+  service TEXT PRIMARY KEY,
+  qbo_item_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS activity_log (

@@ -61,6 +61,7 @@ export interface CustomerRow {
   zip: string | null;
   notes: string | null;
   on_maintenance_plan: number;
+  qbo_customer_id: string | null;
   created_at: string;
 }
 
@@ -104,6 +105,7 @@ export interface JobNoteRow {
 }
 
 export type InvoiceStatus = "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "VOID";
+export type QboSyncStatus = "NOT_SYNCED" | "SYNCING" | "SYNCED" | "FAILED";
 
 export interface InvoiceRow {
   id: number;
@@ -118,12 +120,18 @@ export interface InvoiceRow {
   due_date: string | null;
   paid_at: string | null;
   notes: string | null;
+  qbo_invoice_id: string | null;
+  qbo_sync_status: QboSyncStatus;
+  qbo_sync_error: string | null;
+  qbo_synced_at: string | null;
+  qbo_sync_attempts: number;
   created_at: string;
 }
 
 export interface InvoiceLineItemRow {
   id: number;
   invoice_id: number;
+  service: string | null;
   description: string;
   quantity: number;
   unit_price_cents: number;

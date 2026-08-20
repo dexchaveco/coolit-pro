@@ -1,0 +1,5 @@
+# Pins the Node.js version for Railway's build (Nixpacks). Coolit Pro uses
+# Node's built-in node:sqlite module, which needs Node 22.5+ — without this
+# pin, the build could pick an older Node that doesn't have it at all.
+[variables]
+NIXPACKS_NODE_VERSION = "22"

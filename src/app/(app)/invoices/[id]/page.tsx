@@ -3,6 +3,7 @@ import { getInvoice, listInvoiceLineItems } from "@/lib/data";
 import { PageHeader, Card, StatusBadge, Button } from "@/components/ui";
 import { formatCents, formatDate } from "@/lib/utils";
 import { updateInvoiceStatusAction } from "@/lib/actions/invoices";
+import { QboSyncPanel } from "@/components/qbo-sync-panel";
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,6 +15,10 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="max-w-2xl">
       <PageHeader title={invoice.invoice_number} subtitle={invoice.customer_name} actions={<StatusBadge status={invoice.status} />} />
+
+      <div className="mb-4">
+        <QboSyncPanel invoice={invoice} />
+      </div>
 
       <Card className="p-6">
         <div className="flex justify-between text-sm text-ink-secondary mb-6">
@@ -32,11 +37,11 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           </thead>
           <tbody>
             {lineItems.map((item) => (
-              <tr key={item.id} className="border-b border-hairline">
-                <td className="py-2.5 text-ink">{item.description}</td>
-                <td className="py-2.5 text-right text-ink-secondary">{item.quantity}</td>
-                <td className="py-2.5 text-right text-ink-secondary">{formatCents(item.unit_price_cents)}</td>
-                <td className="py-2.5 text-right text-ink font-medium">{formatCents(item.amount_cents)}</td>
+              <tr key={item.id} className="border-b border-hairline align-top">
+                <td className="py-2.5 pr-4 text-ink whitespace-pre-wrap">{item.description}</td>
+                <td className="py-2.5 text-right text-ink-secondary whitespace-nowrap">{item.quantity}</td>
+                <td className="py-2.5 text-right text-ink-secondary whitespace-nowrap">{formatCents(item.unit_price_cents)}</td>
+                <td className="py-2.5 text-right text-ink font-medium whitespace-nowrap">{formatCents(item.amount_cents)}</td>
               </tr>
             ))}
           </tbody>

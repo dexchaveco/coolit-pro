@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { STATUS_LABELS } from "@/lib/utils";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
@@ -150,17 +150,20 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   );
 }
 
-export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
-    <textarea
-      {...props}
-      className={cn(
-        "w-full rounded-xl border border-hairline bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand",
-        props.className
-      )}
-    />
-  );
-}
+export const Textarea = forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  function Textarea(props, ref) {
+    return (
+      <textarea
+        ref={ref}
+        {...props}
+        className={cn(
+          "w-full rounded-xl border border-hairline bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand",
+          props.className
+        )}
+      />
+    );
+  }
+);
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (

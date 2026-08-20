@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { listUsers } from "@/lib/data";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage({
@@ -9,6 +10,7 @@ export default async function LoginPage({
 }) {
   const session = await getSession();
   if (session) redirect("/dashboard");
+  if (listUsers().length === 0) redirect("/setup");
   const { next } = await searchParams;
 
   return (

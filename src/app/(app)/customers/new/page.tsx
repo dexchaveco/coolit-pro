@@ -24,17 +24,21 @@ export default function NewCustomerPage() {
               <Input name="email" type="email" />
             </Field>
           </div>
-          <Field label="Address">
-            <Input name="address" placeholder="Street address" />
-          </Field>
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="City">
-              <Input name="city" />
-            </Field>
-            <Field label="Zip">
-              <Input name="zip" />
-            </Field>
+
+          <div className="border-t border-hairline pt-4">
+            <p className="text-sm font-medium text-ink-secondary mb-1">Address (optional)</p>
+            <p className="text-xs text-ink-muted mb-3">
+              Not required to bill — mainly useful so whoever answers next time recognizes the property.
+            </p>
+            <div className="space-y-4">
+              <Input name="address" placeholder="Street address" />
+              <div className="grid grid-cols-2 gap-4">
+                <Input name="city" placeholder="City" />
+                <Input name="zip" placeholder="Zip" />
+              </div>
+            </div>
           </div>
+
           <Field label="Notes">
             <Textarea name="notes" rows={3} placeholder="Equipment, access notes, anything worth knowing" />
           </Field>

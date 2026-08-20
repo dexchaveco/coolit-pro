@@ -185,6 +185,14 @@ export function getInvoiceForJob(jobId: number): InvoiceRow | undefined {
   return one<InvoiceRow>("SELECT * FROM invoices WHERE job_id = ?", [jobId]);
 }
 
+export function listFailedQboSyncs(): InvoiceRow[] {
+  return all<InvoiceRow>(
+    `SELECT i.*, c.name as customer_name FROM invoices i
+     JOIN customers c ON c.id = i.customer_id
+     WHERE i.qbo_sync_status = 'FAILED' ORDER BY i.created_at DESC`
+  );
+}
+
 // ---------- Maintenance plans ----------
 
 export function listMaintenancePlans(status?: string): MaintenancePlanRow[] {

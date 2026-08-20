@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { listInvoices } from "@/lib/data";
 import { PageHeader, LinkButton, Card, StatusBadge, EmptyState } from "@/components/ui";
 import { formatCents, formatDate } from "@/lib/utils";
@@ -41,7 +42,11 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
             {invoices.map((inv) => (
               <Link key={inv.id} href={`/invoices/${inv.id}`} className="flex items-center justify-between gap-3 px-5 py-4 hover:bg-page">
                 <div className="min-w-0">
-                  <p className="font-medium text-ink truncate">{inv.invoice_number}</p>
+                  <p className="font-medium text-ink truncate flex items-center gap-1.5">
+                    {inv.invoice_number}
+                    {inv.qbo_sync_status === "SYNCED" && <CheckCircle2 className="h-3.5 w-3.5 text-good shrink-0" />}
+                    {inv.qbo_sync_status === "FAILED" && <AlertTriangle className="h-3.5 w-3.5 text-critical shrink-0" />}
+                  </p>
                   <p className="text-sm text-ink-secondary truncate">{inv.customer_name} · {formatDate(inv.created_at)}</p>
                 </div>
                 <div className="text-right shrink-0">

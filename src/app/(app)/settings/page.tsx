@@ -4,10 +4,16 @@ import { PageHeader, Card, Avatar } from "@/components/ui";
 import { InviteTeamForm } from "@/components/invite-team-form";
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { CallWebhookInfo } from "@/components/call-webhook-info";
+import { QuickBooksSettingsCard } from "@/components/quickbooks-settings-card";
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ qbo?: string; message?: string }>;
+}) {
   const session = await getSession();
   const users = listUsers();
+  const { qbo, message } = await searchParams;
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -33,6 +39,10 @@ export default async function SettingsPage() {
         <h2 className="font-semibold text-ink mb-3">Your password</h2>
         <ChangePasswordForm />
       </Card>
+
+      {session?.role === "OWNER" && (
+        <QuickBooksSettingsCard notice={qbo ? { type: qbo, message } : undefined} />
+      )}
 
       {session?.role === "OWNER" && <CallWebhookInfo />}
     </div>
